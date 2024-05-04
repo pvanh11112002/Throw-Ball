@@ -15,10 +15,14 @@ public class Hole : MonoBehaviour
             {
                 Debug.Log("Var");
                 PointManager.Instance.PlayerGetPoint();
+                TurnManager.Instance.ChangeTurnToBot();
+                other.GetComponent<PlayerController>().enabled = false;
             }    
             if(other.gameObject.layer == layerBallOfBot)
             {
                 PointManager.Instance.BotGetPoint();
+                TurnManager.Instance.ChangeTurnToPlayer();
+                other.GetComponent<BotController>().enabled = false;
             }
             other.tag = "Ball Into Hole";
         }    

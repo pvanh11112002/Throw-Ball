@@ -18,19 +18,29 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if(!isShoot && Input.GetMouseButtonDown(0) && TurnManager.Instance.currentTurn == Turn.Player)
+        if (TurnManager.Instance.currentGameState == GameState.Play)
         {
-            mousePressDownPos = Input.mousePosition;
-        } 
-        if(!isShoot && Input.GetMouseButtonUp(0) && TurnManager.Instance.currentTurn == Turn.Player)
-        {
-            mouseReleasePos = Input.mousePosition;
-            rb.useGravity = true;
-            Shoot((mouseReleasePos - mousePressDownPos)/2);
-            TurnManager.Instance.ChangeTurnToBot();
-            
+            if (!isShoot && Input.GetMouseButtonDown(0) && TurnManager.Instance.currentTurn == Turn.Player)
+            {
+                mousePressDownPos = Input.mousePosition;
+            }
+            if (!isShoot && Input.GetMouseButtonUp(0) && TurnManager.Instance.currentTurn == Turn.Player)
+            {
+                mouseReleasePos = Input.mousePosition;
+                rb.useGravity = true;
+                Shoot((mouseReleasePos - mousePressDownPos) / 2);
+            }
         }
-        
+        //if (!isShoot && Input.GetMouseButtonDown(0) && TurnManager.Instance.currentTurn == Turn.Player)
+        //{
+        //    mousePressDownPos = Input.mousePosition;
+        //}
+        //if (!isShoot && Input.GetMouseButtonUp(0) && TurnManager.Instance.currentTurn == Turn.Player)
+        //{
+        //    mouseReleasePos = Input.mousePosition;
+        //    rb.useGravity = true;
+        //    Shoot((mouseReleasePos - mousePressDownPos) / 2);
+        //}
     }  
     void Shoot(Vector3 force)
     {
@@ -38,6 +48,7 @@ public class PlayerController : MonoBehaviour
             return;
         this.tag = "Ball Miss";
         rb.AddForce(new Vector3(force.x, force.y, force.y));
+        GetComponent<Ball>().elapsedTime = 0;
         isShoot = true;
     }
 }

@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PointManager : MonoBehaviour
 {
+    
     public static PointManager Instance { get; private set; }
+
+    [Header("Don't change this")]
     public int pointOfPlayer = 0;
     public int pointOfBot = 0;
 
