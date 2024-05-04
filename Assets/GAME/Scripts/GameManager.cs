@@ -19,16 +19,21 @@ public class GameManager : MonoBehaviour
         currentGameStatus = GameCycle.Start;
         winUI.SetActive(false);
         loseUI.SetActive(false);
+
+        TurnManager.Instance.currentGameState = GameState.Pause;
     }
     public void JudgeTheResult()
     {
         if (PointManager.Instance.pointOfPlayer >= PointManager.Instance.pointOfBot)
         {
             winUI.SetActive(true);
+            //AudioManager.Instance.TurnOfAllSounds();
+            
         }
         else
         {
-            loseUI.SetActive(false);
+            loseUI.SetActive(true);
+            
         }    
     }    
 }

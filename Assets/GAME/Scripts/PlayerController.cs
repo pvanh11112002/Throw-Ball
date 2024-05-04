@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,10 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     public Vector3 mousePressDownPos;
     public Vector3 mouseReleasePos;
-
+    //private bool isSliding = false;
 
     private Rigidbody rb;
     public bool isShoot = false;
+    public bool isMoving = true;
 
     void Start()
     {
@@ -23,27 +24,35 @@ public class PlayerController : MonoBehaviour
             if (!isShoot && Input.GetMouseButtonDown(0) && TurnManager.Instance.currentTurn == Turn.Player)
             {
                 mousePressDownPos = Input.mousePosition;
+                //isSliding = true;
             }
             if (!isShoot && Input.GetMouseButtonUp(0) && TurnManager.Instance.currentTurn == Turn.Player)
             {
                 mouseReleasePos = Input.mousePosition;
+                //isSliding = false;
                 rb.useGravity = true;
                 Shoot((mouseReleasePos - mousePressDownPos) / 2);
             }
+            //if (Input.touchCount > 0)
+            //{
+            //    Debug.Log("Đang chạm");
+            //    isSliding = true;
+            //}
+            //else if (Input.touchCount == 0 && isSliding == true)
+            //{
+            //    Debug.Log("Đang thả");
+            //    isSliding = false;
+            //}
+            //if (isShoot && rb.velocity.magnitude < 0.01f)
+            //{
+            //    isMoving = false;
+            //}
         }
-        //if (!isShoot && Input.GetMouseButtonDown(0) && TurnManager.Instance.currentTurn == Turn.Player)
-        //{
-        //    mousePressDownPos = Input.mousePosition;
-        //}
-        //if (!isShoot && Input.GetMouseButtonUp(0) && TurnManager.Instance.currentTurn == Turn.Player)
-        //{
-        //    mouseReleasePos = Input.mousePosition;
-        //    rb.useGravity = true;
-        //    Shoot((mouseReleasePos - mousePressDownPos) / 2);
-        //}
+           
     }  
     void Shoot(Vector3 force)
     {
+        AudioManager.Instance.Play("Throw");
         if (isShoot)
             return;
         this.tag = "Ball Miss";

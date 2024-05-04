@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 // Mark here
@@ -33,10 +34,10 @@ public class TurnManager : MonoBehaviour
     public Transform throwPointOfBot;
 
     [Tooltip("Maximum turn of this level")]
-    public int howManyTurn = 0;
+    public int howManyTurn;
 
     [Tooltip("How many turn you want the bot to throw exactly to the hole")]
-    public int numberOfTurnNotMiss = 0;
+    public int numberOfTurnNotMiss;
 
     [Header("Don't change this")]
     public Turn currentTurn;    
@@ -45,12 +46,19 @@ public class TurnManager : MonoBehaviour
     public int currentNumberTurnOfBot = 0;
     public GameState currentGameState;
 
-
-    void Awake()
+    private void Awake()
     {
         Instance = this;
+    }
+    void OnEnable()
+    {
+        howManyTurn = CanvasLevelSelector.Instance.maximumTurn;
+        numberOfTurnNotMiss = CanvasLevelSelector.Instance.numberTurnNotMiss;
+        AudioManager.Instance.Play("Your Turn");
         PlayerSpawnBall();
         currentGameState = GameState.Play;
+        AudioManager.Instance.TurnOffSound("Back Ground Music Level Selector");
+        AudioManager.Instance.Play("BG Game");
         // Chọn ra những turn nào bot ném trúng
         for (int i = 0; i < numberOfTurnNotMiss; i++)
         {
@@ -72,62 +80,48 @@ public class TurnManager : MonoBehaviour
     }
     private void Update()
     {
-        //if (howManyTurn > 1)
-        //{
-        //    if(Input.GetKeyDown(KeyCode.LeftArrow))
-        //    {
-        //        ChangeTurnToPlayer();
-        //        //howManyTurn--;
-        //    }
-        //    if (Input.GetKeyDown(KeyCode.RightArrow))
-        //    {
-        //        ChangeTurnToBot();
-        //        //howManyTurn--;
-        //    }
-        //    //if (Input.GetKeyDown(KeyCode.UpArrow))
-        //    //{
-        //    //    Debug.Log(currentTurn);
-        //    //}
-
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("Hết lượt ném");
-        //}
         if (currentNumberTurnOfPlayer >= howManyTurn && currentNumberTurnOfBot >= howManyTurn)
         {
             currentGameState = GameState.Pause;
+            AudioManager.Instance.TurnOffSound("BG Game");
             GameManager.Instance.JudgeTheResult();
         }
     }
     public void ChangeTurnToBot()
     {
-        if(currentTurn == Turn.Bot)
+        if(currentGameState == GameState.Play) 
         {
-            Debug.Log("Currently is bot turn, let him cook");
-            return;
-        } 
-        else
-        {
-            Debug.Log("ChangeTurn");
-            currentTurn = Turn.Bot;
-            currentNumberTurnOfPlayer++;
-            BotSpawnBall();
-        }      
+            if (currentTurn == Turn.Bot)
+            {
+                Debug.Log("Currently is bot turn, let him cook");
+                return;
+            }
+            else
+            {
+                Debug.Log("ChangeTurn");
+                currentTurn = Turn.Bot;
+                currentNumberTurnOfPlayer++;
+                BotSpawnBall();
+            }
+        }             
     }
     public void ChangeTurnToPlayer()
-    {       
-        if (currentTurn == Turn.Player)
+    {
+        if (currentGameState == GameState.Play)
         {
-            Debug.Log("Currently is player turn, let him cook");
-            return;
-        }
-        else
-        {
-            currentTurn = Turn.Player;
-            currentNumberTurnOfBot++;
-            PlayerSpawnBall();
-        }
+            if (currentTurn == Turn.Player)
+            {
+                Debug.Log("Currently is player turn, let him cook");
+                return;
+            }
+            else
+            {              
+                currentTurn = Turn.Player;
+                currentNumberTurnOfBot++;
+                PlayerSpawnBall();
+                AudioManager.Instance.Play("Your Turn");
+            }
+        }     
     }
     public void PlayerSpawnBall()
     {

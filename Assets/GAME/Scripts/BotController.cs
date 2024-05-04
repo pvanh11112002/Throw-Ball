@@ -31,6 +31,7 @@ public class BotController : MonoBehaviour
         Vector3 direction = (hole.position - transform.position).normalized;
         direction = new Vector3(direction.x, direction.y, direction.y);
         rb.AddForce(direction * throwForce, ForceMode.Impulse);
+        AudioManager.Instance.Play("Throw");
         this.tag = "Ball Miss";  
         canThrow = false;
     }    
@@ -53,6 +54,7 @@ public class BotController : MonoBehaviour
         Vector3 direction = (aimTarget - transform.position).normalized;
         direction = new Vector3(direction.x, direction.y, direction.y);
         rb.AddForce(direction * throwForce, ForceMode.Impulse);
+        AudioManager.Instance.Play("Throw");
         this.tag = "Ball Miss";
         canThrow = false;
     }    

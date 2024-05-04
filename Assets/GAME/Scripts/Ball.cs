@@ -4,22 +4,35 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    // Mark deadTime
     public float elapsedTime = 0;
     public int layerBallOfBot;
     public int layerBallOfPlayer;
-    [SerializeField] int deadTime;
+    public bool canDie = false;
+    public bool startCount = false;
+    private Rigidbody rb;
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ball Mis" || collision.gameObject.tag == "Ball Into Hole" )
+        {
+            AudioManager.Instance.Play("Cock");
+        }
+        else
+        {
+            AudioManager.Instance.Play("Collision Obj");
+        }           
+    }
     private void Update()
     {
-        if(tag == "Ball Into Hole")
+        if (tag == "Ball Into Hole")
         {
             return;
-        }    
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime > deadTime && this.tag == "Ball Miss")
+        }
+        if (canDie && this.tag == "Ball Miss")
         {
-            elapsedTime = 0;
-            
             if (gameObject.layer == layerBallOfPlayer)
             {
                 TurnManager.Instance.ChangeTurnToBot();
@@ -28,7 +41,15 @@ public class Ball : MonoBehaviour
             {
                 TurnManager.Instance.ChangeTurnToPlayer();
             }
-            Destroy(gameObject);
+            this.enabled = false;
+        }
+        if (rb.velocity != Vector3.zero)
+        {
+            startCount = true;
+        }    
+        if(startCount == true && rb.velocity.magnitude < 0.5f)
+        {
+            canDie = true;
         }    
     }
 }
